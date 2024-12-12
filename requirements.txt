@@ -2,3 +2,4 @@ Django
 psycopg2-binary
 django-cloudinary-storage
 cloudinary
+python-dotenv
