@@ -1,8 +1,10 @@
 {
     "builds": [
-        { "src": "sohit/wsgi.py", "use": "@vercel/python" }
+        { "src": "sohit/wsgi.py", "use": "@vercel/python" },
+        { "src": "staticfiles/**", "use": "@vercel/static" }
     ],
     "routes": [
+        { "src": "/static/(.*)", "dest": "/staticfiles/$1" },
         { "src": "/(.*)", "dest": "sohit/wsgi.py" }
     ]
 }
