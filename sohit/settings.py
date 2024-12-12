@@ -3,8 +3,9 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import cloudinary_storage
-from cloudinary.utils import cloudinary_url
+from dotenv import load_dotenv
 
+load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'your-secret-key'
@@ -24,9 +25,9 @@ INSTALLED_APPS = [
 ]
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dx0pxlpnb',
-    'API_KEY': '363975928655634',
-    'API_SECRET': 'lXSOC9ZPpprwq4A1I5__fGiddBU'
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET')
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
