@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Forum Post</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
@@ -12,10 +12,20 @@
     <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
 </head>
 <body>
-    <h1 class="glow-text">Hello World</h1>
-    <img src="{% static 'images/nz.png' %}" alt="Your Image" class="hover-image">
-    <button id="counterButton" class="glow-button">Press me</button>
-    <p>Button pressed <span id="counter">0</span> times.</p>
+    <h1 class="glow-text">Create a Forum Post</h1>
+    <img src="{% static 'images/nz.png' %}" alt="Your Image" class="hover-image circle-image">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="upload-button">Submit Post</button>
+    </form>
+    {% if success is not None %}
+        {% if success %}
+            <p class="success-message">Post created successfully!</p>
+        {% else %}
+            <p class="error-message">Failed to create post. Please try again.</p>
+        {% endif %}
+    {% endif %}
     <script src="{% static 'js/scripts.js' %}"></script>
 </body>
 </html>

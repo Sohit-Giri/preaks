@@ -1,9 +1,14 @@
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+import cloudinary_storage
+from cloudinary.utils import cloudinary_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'your-secret-key'
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = [".vercel.app", "localhost", "127.0.0.1"]
 
 INSTALLED_APPS = [
@@ -14,7 +19,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'cloudinary',
+    'cloudinary_storage',
 ]
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dx0pxlpnb',
+    'API_KEY': '363975928655634',
+    'API_SECRET': 'lXSOC9ZPpprwq4A1I5__fGiddBU'
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
