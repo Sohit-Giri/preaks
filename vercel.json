@@ -1,0 +1,12 @@
+{
+    "builds": [
+        { "src": "sohit/wsgi.py", "use": "@vercel/python" }
+    ],
+    "routes": [
+        { "src": "/(.*)", "dest": "sohit/wsgi.py" }
+    ],
+    "env": {
+        "DJANGO_SETTINGS_MODULE": "sohit.settings"
+    },
+    "postinstall": "python manage.py collectstatic --noinput"
+}
