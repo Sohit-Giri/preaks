@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from sohit import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('redbull/', admin.site.urls),
     path('', include('myapp.urls')),
 ]
 
