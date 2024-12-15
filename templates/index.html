@@ -78,6 +78,13 @@
                 window.location.href = event.target.href;
             }, 1000); // Adjust the delay as needed
         }
+
+        // Function to display selected file name
+        function updateFileName() {
+            const fileInput = document.getElementById('file-upload');
+            const fileNameDisplay = document.getElementById('file-name-display');
+            fileNameDisplay.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file chosen';
+        }
     </script>
     <style>
         #loader {
@@ -121,6 +128,14 @@
                 height: 260px;
             }
         }
+
+        /* Inline CSS for file name display */
+        #file-name-display {
+            display: inline-block;
+            margin-left: 10px;
+            color: #333;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -129,7 +144,17 @@
     <img src="{% static 'images/nz.png' %}" alt="Your Image" class="hover-image circle-image">
     <form method="post" enctype="multipart/form-data" onsubmit="showLoader()">
         {% csrf_token %}
-        <p class="logged-in-as">Logged in as: {{ user.first_name }} {{user.last_name}}</p>
+        <p class="logged-in-as" style="text-align: center; font-family: 'Times New Roman', Times, serif;">
+            Logged in as: {{ user.first_name }} {{ user.last_name }}
+        </p>
+        {% if user.first_name == "Guest" and user.last_name == "User" %}
+        <p style="text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14px;">
+            Tired of Using Guest Version? 
+            <a href="/signup" style="text-decoration: underline; color: blue;">Signup Now!!!</a>
+        </p>
+        {% endif %}
+        
+        
         {{ form.non_field_errors }}
         <div>
             {{ form.title.label_tag }} {{ form.title }}
@@ -145,7 +170,8 @@
             <label for="file-upload" class="custom-file-upload">
                 Choose File
             </label>
-            <input id="file-upload" type="file" name="photo">
+            <input id="file-upload" type="file" name="photo" onchange="updateFileName()">
+            <span id="file-name-display">No file chosen</span>
         </div>
         <div>
             {{ form.post.label_tag }} {{ form.post }}

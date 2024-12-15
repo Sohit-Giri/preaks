@@ -13,65 +13,105 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
     <script>
-// Array of progressive loading messages
-const loadingMessages = [
-"Searching for the meaning of life... and your data."
-,
-"Patience is a virtue... we're working on it.",
-'Briefly considering a career change...', 
-    'Wishing I had chosen a different career path...',
-    'This loading screen is starting to feel a bit like purgatory.',
-    'The server is currently experiencing a mid-life crisis.', 
-    'Taking a bit longer than expected...',
-    'Almost there, just a moment more...',
-    'Good things come to those who wait...',
-];
+    // New functions for terms and conditions popup
+    function showTermsPopup() {
+            const termsPopup = document.getElementById('termsPopup');
+            termsPopup.style.display = 'block';
+        }
 
-let messageIndex = 0;
-let loaderInterval = null;
+        function closeTermsPopup() {
+            const termsPopup = document.getElementById('termsPopup');
+            termsPopup.style.display = 'none';
+        }
 
-function showLoader(initialMessage = '⏳ Fetching data from server.... ☕️') {
-    const loader = document.getElementById('loader');
-    loader.style.display = 'block';
-    
-    // Load Lottie animation
-    lottie.loadAnimation({
-        container: loader,
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: '{% static "js/loader.json" %}'
-    });
+        function handleGuestLogin() {
+            const termsCheckbox = document.getElementById('guestTerms');
+            const termsError = document.getElementById('termsError');
+            
+            if (!termsCheckbox.checked) {
+                // Show error message
+                termsError.style.display = 'block';
+                
+                // Highlight the checkbox container
+                termsCheckbox.closest('.terms-container').classList.add('terms-error');
+                
+                // Optional: Scroll to the terms checkbox
+                termsCheckbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                return;
+            }
+            
+            // Clear any previous errors
+            termsError.style.display = 'none';
+            termsCheckbox.closest('.terms-container').classList.remove('terms-error');
+            
+            // Proceed with guest login
+            showLoader('Logging in as Guest...', '{% url 'guest_login' %}');
+        }
+        // Array of progressive loading messages
+        const loadingMessages = [
+            "Searching for the meaning of life... and your data.",
+            "Patience is a virtue... we're working on it.",
+            'Briefly considering a career change...', 
+            'Wishing I had chosen a different career path...',
+            'This loading screen is starting to feel a bit like purgatory.',
+            'The server is currently experiencing a mid-life crisis.', 
+            'Taking a bit longer than expected...',
+            'Almost there, just a moment more...',
+            'Good things come to those who wait...',
+        ];
 
-    // Create message element
-    const statusMessage = document.createElement('p');
-    statusMessage.id = 'loaderMessage';
-    statusMessage.textContent = initialMessage;
-    statusMessage.style.color = '#fff';
-    statusMessage.style.textAlign = 'center';
-    loader.appendChild(statusMessage);
+        let messageIndex = 0;
+        let loaderInterval = null;
 
-    // Start rotating messages
-    messageIndex = 0;
-    loaderInterval = setInterval(() => {
-        statusMessage.textContent = loadingMessages[messageIndex];
-        messageIndex = (messageIndex + 1) % loadingMessages.length;
-    }, 1500); // Change message every 2 seconds
-}
+        function showLoader(initialMessage = '⏳ Fetching data from server.... ☕️', redirectUrl = null) {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block';
+            
+            // Load Lottie animation
+            lottie.loadAnimation({
+                container: loader,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: '{% static "js/loader.json" %}'
+            });
 
-function hideLoader() {
-    const loader = document.getElementById('loader');
-    loader.style.display = 'none';
+            // Create message element
+            const statusMessage = document.createElement('p');
+            statusMessage.id = 'loaderMessage';
+            statusMessage.textContent = initialMessage;
+            statusMessage.style.color = '#fff';
+            statusMessage.style.textAlign = 'center';
+            loader.appendChild(statusMessage);
 
-    // Remove the status message and stop the interval
-    const statusMessage = document.getElementById('loaderMessage');
-    if (statusMessage) loader.removeChild(statusMessage);
-    
-    if (loaderInterval) {
-        clearInterval(loaderInterval);
-        loaderInterval = null;
-    }
-}
+            // Start rotating messages
+            messageIndex = 0;
+            loaderInterval = setInterval(() => {
+                statusMessage.textContent = loadingMessages[messageIndex];
+                messageIndex = (messageIndex + 1) % loadingMessages.length;
+            }, 1500); // Change message every 2 seconds
+
+            if (redirectUrl) {
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 1000); // Adjust the delay as needed
+            }
+        }
+
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'none';
+
+            // Remove the status message and stop the interval
+            const statusMessage = document.getElementById('loaderMessage');
+            if (statusMessage) loader.removeChild(statusMessage);
+            
+            if (loaderInterval) {
+                clearInterval(loaderInterval);
+                loaderInterval = null;
+            }
+        }
 
         // Toggle password visibility
         function togglePasswordVisibility(id) {
@@ -88,52 +128,188 @@ function hideLoader() {
             }
         }
     </script>
-        <style>
+    <style>
+/* Custom styled checkbox */
+.terms-container {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    gap: 10px;
+    position: relative;
+}
+
+.terms-container input[type="checkbox"] {
+    display: none; /* Hide the default checkbox */
+}
+
+.terms-container label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    position: relative;
+}
+
+.terms-container label::before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007BFF; /* Border color */
+    border-radius: 4px;
+    background-color: white;
+    transition: background-color 0.3s, border-color 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right: 8px; /* Add space between checkbox and text */
+}
+
+.terms-container input[type="checkbox"]:checked + label::before {
+    background-color: #007BFF; /* Checked state background color */
+    border-color: #0056b3; /* Slightly darker border */
+}
+
+.terms-container input[type="checkbox"]:checked + label::after {
+    content: "\f00c"; /* FontAwesome check icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 14px;
+    color: white;
+    position: absolute;
+    left: 5px;
+    top: 6px;
+}
+
+
+/* Error highlight */
+.terms-error {
+    border: 2px solid red;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+.terms-container .terms-link {
+    color: #007BFF;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+#termsError {
+    display: none;
+    color: red;
+    margin-top: 5px;
+    font-size: 0.8em;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .terms-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
+
+        
+        .terms-link {
+            margin-left: 5px;
+            color: blue;
+            text-decoration: underline;
+        }
+        
+        /* Terms Popup Styles */
+        #termsPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1100;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .terms-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #ff0000;
+        }
+
+        .terms-content {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .underline-text {
+            text-decoration: underline;
+        }
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            width: 190px;
+            height: 240px;
+        }
+
+        @media (min-width: 576px) {
             #loader {
-                display: none;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                z-index: 1000;
-                background-color: rgba(0, 0, 0, 0.5);
-                border-radius: 10px;
-                padding: 20px;
+                width: 180px;
+                height: 220px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            #loader {
                 width: 190px;
                 height: 240px;
             }
-    
-            @media (min-width: 576px) {
-                #loader {
-                    width: 180px;
-                    height: 220px;
-                }
+        }
+
+        @media (min-width: 992px) {
+            #loader {
+                width: 200px;
+                height: 250px;
             }
-    
-            @media (min-width: 768px) {
-                #loader {
-                    width: 190px;
-                    height: 240px;
-                }
+        }
+
+        @media (min-width: 1200px) {
+            #loader {
+                width: 210px;
+                height: 260px;
             }
-    
-            @media (min-width: 992px) {
-                #loader {
-                    width: 200px;
-                    height: 250px;
-                }
-            }
-    
-            @media (min-width: 1200px) {
-                #loader {
-                    width: 210px;
-                    height: 260px;
-                }
-            }
-        </style>
+        }
+    </style>
 </head>
 <body>
     <div id="loader"></div>
+    
+    <!-- Terms and Conditions Popup -->
+    <div id="termsPopup">
+        <span class="terms-close-btn" onclick="closeTermsPopup()">&times;</span>
+        <h2>Terms and Conditions</h2>
+        <div class="terms-content">
+            <p>Welcome to our service. By accessing this website, you are agreeing to be bound by the following terms and conditions:</p>
+            
+            <h3 class="underline-text">Community Guidelines</h3>
+            <p>1. Please refrain from uploading any content that is sexually suggestive, harassing, or bullying.</p>
+            <p>2. <strong>Guest users:</strong> Your activity on this forum is monitored.</p>
+        </div>
+    </div>
+
     <form method="post" onsubmit="showLoader()">
         <h1>Login</h1>
         {% csrf_token %}
@@ -150,11 +326,26 @@ function hideLoader() {
         </div>
         <p>Got a Dumb Brain. <a href="{% url 'forgot_password' %}">Forgot Password?</a></p>
         <br>
+        <p>You Know What? If you are not a guest user, you are not required to accept T&C*.</p>
         <button type="submit">Login</button>
         {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
-        <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
-    </form>
+           <p class="error">{{ error }}</p>
+       {% endif %}
+       <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p><br>
+       
+       <!-- Guest Login Section -->
+       <div class="terms-container">
+        <input type="checkbox" id="guestTerms" name="guestTerms">
+        <label for="guestTerms">
+            I accept the 
+            <a href="#" onclick="event.preventDefault(); showTermsPopup();" class="terms-link">Terms and Conditions</a>
+        </label>
+    </div>
+    <div id="termsError">Please accept the Terms and Conditions to login as guest.</div>
+    
+       <p>Or, 
+           <a href="#" onclick="event.preventDefault(); handleGuestLogin()">Login as Guest</a> Because Sohit Respects Your Privacy.
+       </p>
+   </form>
 </body>
 </html>

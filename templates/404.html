@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oops! Page Not Found</title>
+    <style>
+        /* Fun and whimsical styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .error-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            transform-style: preserve-3d;
+            transition: all 0.6s ease;
+        }
+
+        .error-code {
+            font-size: 120px;
+            color: #ff6b6b;
+            margin: 0;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            transform: translateZ(50px);
+        }
+
+        .error-message {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 20px 0;
+        }
+
+        .funny-description {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .back-home-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-home-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .lost-character {
+            font-size: 40px;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container" id="errorContainer">
+        <div class="lost-character">🤷‍♂️</div>
+        <h1 class="error-code">404</h1>
+        <h2 class="error-message">Page Wandered Off!</h2>
+        <p class="funny-description">
+            Looks like this page decided to take an unexpected vacation. 
+            Perhaps it's sipping coconut drinks on a digital beach?
+        </p>
+        <a href="/index" class="back-home-btn">Take Me Home</a>
+    </div>
+
+    <script>
+        // Add some interactive 3D tilt effect
+        const container = document.getElementById('errorContainer');
+
+        container.addEventListener('mousemove', (e) => {
+            const { left, top, width, height } = container.getBoundingClientRect();
+            const centerX = left + width / 2;
+            const centerY = top + height / 2;
+
+            const mouseX = e.clientX - centerX;
+            const mouseY = e.clientY - centerY;
+
+            const rotateX = -mouseY / (height / 2) * 10;
+            const rotateY = mouseX / (width / 2) * 10;
+
+            container.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        container.addEventListener('mouseleave', () => {
+            container.style.transform = 'rotateX(0) rotateY(0)';
+        });
+
+        // Randomize funny descriptions
+        const descriptions = [
+            "Oops! This page is playing hide and seek.",
+            "Looks like our page took a wrong turn at Albuquerque.",
+            "The page you're looking for is on an unexpected adventure.",
+            "This URL seems to have gotten lost in the digital wilderness.",
+            "Hmm, seems like our page went for a coffee break."
+        ];
+
+        const descriptionElement = document.querySelector('.funny-description');
+        descriptionElement.textContent = descriptions[Math.floor(Math.random() * descriptions.length)];
+    </script>
+</body>
+</html>
