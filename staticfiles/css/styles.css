@@ -1,76 +1,175 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin-top: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
-.glow-button {
-    background-color: #1e90ff;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(30, 144, 255, 0.5);
-    transition: box-shadow 0.3s ease-in-out;
-}
-
-.glow-button:hover {
-    box-shadow: 0 0 40px rgba(30, 144, 255, 1);
-}
-
-.glow-text {
-    font-size: 2em;
+h1.glow-text {
     color: #fff;
-    text-align: center;
-    animation: glow 1s ease-in-out infinite alternate;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    margin-bottom: 20px;
 }
 
-@keyframes glow {
-    from {
-        text-shadow: 0 0 10px #fff, 0 0 20px #1e90ff, 0 0 30px #1e90ff, 0 0 40px #1e90ff, 0 0 50px #1e90ff, 0 0 60px #1e90ff, 0 0 70px #1e90ff;
-    }
-    to {
-        text-shadow: 0 0 20px #fff, 0 0 30px #1e90ff, 0 0 40px #1e90ff, 0 0 50px #1e90ff, 0 0 60px #1e90ff, 0 0 70px #1e90ff, 0 0 80px #1e90ff;
-    }
-}
-
-.hover-image {
+img.hover-image {
     width: 150px;
     height: 150px;
-    transition: transform 0.3s ease-in-out;
     border-radius: 50%;
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
 }
 
-.hover-image:hover {
+img.hover-image:hover {
     transform: scale(1.1);
 }
 
-.upload-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
+form {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    text-align: left;
+}
+
+form p {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+}
+
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+textarea:hover,
+select:hover {
+    border-color: #764ba2;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 12px 20px;
     cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
+    background: linear-gradient(to right, #667eea, #764ba2);
+    color: white;
+    border-radius: 10px;
+    transition: all 0.4s ease;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
 }
 
-.upload-button:hover {
-    background-color: #45a049;
+.custom-file-upload:hover {
+    background: linear-gradient(to left, #667eea, #764ba2);
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
 }
 
-.success-message {
-    color: green;
-    font-weight: bold;
+button.upload-button {
+    background: linear-gradient(to right, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    width: 100%; /* Make the button full width */
+    max-width: 500px; /* Ensure it matches the form width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-.error-message {
-    color: red;
-    font-weight: bold;
+button.upload-button:hover {
+    background: linear-gradient(to left, #667eea, #764ba2);
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+p.success-message {
+    color: #4caf50;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+p.error-message {
+    color: #e74c3c;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+a.logout-link {
+    color: #667eea;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    margin-top: 20px;
+    display: block;
+    text-align: center;
+    padding: 15px 20px; /* Match the padding of the button */
+    border: 2px solid;
+    border-image-slice: 1;
+    border-width: 2px;
+    border-image-source: linear-gradient(to right, #667eea, #764ba2);
+    border-radius: 10px;
+    background: transparent;
+    width: 100%; /* Make the link full width */
+    max-width: 500px; /* Ensure it matches the form width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+a.logout-link:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+p.logged-in-as {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
 }
