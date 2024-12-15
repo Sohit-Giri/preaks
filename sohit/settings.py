@@ -9,8 +9,8 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'your-secret-key'
-DEBUG = True
-ALLOWED_HOSTS = [".vercel.app", "localhost", "127.0.0.1"]
+DEBUG = False
+ALLOWED_HOSTS = ["sohitgiri.com.np","www.sohitgiri.com.np", ".vercel.app", "onrender.com", "localhost", "127.0.0.1"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
