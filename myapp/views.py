@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.core.mail import send_mail
@@ -10,6 +10,9 @@ from .forms import SignupForm, LoginForm, ForumForm
 from .models import OTP, Forum
 import random
 import cloudinary.uploader
+
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
 
 def validate_email(request):
     email = request.GET.get('email', None)
@@ -178,6 +181,17 @@ def resend_otp(request):
         return JsonResponse({'success': True})
 
     return JsonResponse({'success': False})
+
+def guest_login(request):
+    # Create or get a guest user
+    guest_user, created = User.objects.get_or_create(username='guest_user')
+    if created:
+        guest_user.set_unusable_password()
+        guest_user.save()
+    
+    # Log in the guest user
+    auth_login(request, guest_user)
+    return redirect('index')  # Redirect to the index view
 
 @login_required
 def index(request):
