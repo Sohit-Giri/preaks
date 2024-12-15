@@ -14,6 +14,7 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('index/', views.index, name='index'),
     path('resend-otp/', views.resend_otp, name='resend_otp'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('validate-email/', views.validate_email, name='validate_email'),
 ]
 if settings.DEBUG:

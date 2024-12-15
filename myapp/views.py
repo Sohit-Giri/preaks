@@ -5,12 +5,11 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.utils import timezone  # Import timezone
+from django.utils import timezone
 from .forms import SignupForm, LoginForm, ForumForm
 from .models import OTP, Forum
 import random
 import cloudinary.uploader
-
 
 def validate_email(request):
     email = request.GET.get('email', None)
@@ -21,6 +20,51 @@ def validate_email(request):
 
 def generate_otp():
     return str(random.randint(10000, 99999))
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if 'get_otp' in request.POST:
+            if User.objects.filter(email=email).exists():
+                otp_code = generate_otp()
+                otp, created = OTP.objects.update_or_create(
+                    email=email,
+                    defaults={'code': otp_code, 'created_at': timezone.now()}
+                )
+                send_mail(
+                    'Your OTP Code',
+                    f'Your OTP code is {otp_code}',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    fail_silently=False,
+                )
+                return render(request, 'forgot_password.html', {'otp_sent': True, 'email': email})
+            else:
+                return render(request, 'forgot_password.html', {'error': 'It seems like you are not a user here before.', 'email': email})
+        elif 'validate_otp' in request.POST:
+            otp = request.POST.get('otp')
+            try:
+                otp_record = OTP.objects.get(email=email)
+                if otp_record.code == otp:
+                    if otp_record.is_expired():
+                        return render(request, 'forgot_password.html', {'error': 'OTP has expired', 'otp_sent': True, 'email': email})
+                    else:
+                        return render(request, 'forgot_password.html', {'otp_validated': True, 'email': email})
+                else:
+                    return render(request, 'forgot_password.html', {'error': 'Invalid OTP', 'otp_sent': True, 'email': email})
+            except OTP.DoesNotExist:
+                return render(request, 'forgot_password.html', {'error': 'Invalid OTP', 'otp_sent': True, 'email': email})
+        elif 'save_changes' in request.POST:
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            if new_password == confirm_password:
+                user = User.objects.get(email=email)
+                user.set_password(new_password)
+                user.save()
+                return redirect('login')
+            else:
+                return render(request, 'forgot_password.html', {'error': 'Passwords do not match', 'otp_validated': True, 'email': email})
+    return render(request, 'forgot_password.html')
 
 def signup(request):
     if request.method == 'POST':
@@ -113,7 +157,6 @@ def logout(request):
     auth_logout(request)
     return redirect('login')
 
-
 def resend_otp(request):
     email = request.GET.get('email', None)
     if email:
@@ -136,7 +179,6 @@ def resend_otp(request):
 
     return JsonResponse({'success': False})
 
-
 @login_required
 def index(request):
     if request.method == 'POST':
@@ -152,7 +194,7 @@ def index(request):
                 )
                 forum_post.photo = upload_result['url']
             forum_post.save()
-            return render(request, 'index.html', {'form': form, 'success': True})
+            return render(request, 'index.html', {'form': ForumForm(), 'success': True})
         else:
             return render(request, 'index.html', {'form': form, 'success': False})
     else:
