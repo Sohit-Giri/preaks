@@ -5,6 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
     {% load static %}
+    <style>
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            width: 190px;
+            height: 240px;
+        }
+
+        @media (min-width: 576px) {
+            #loader {
+                width: 180px;
+                height: 220px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            #loader {
+                width: 190px;
+                height: 240px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            #loader {
+                width: 200px;
+                height: 250px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            #loader {
+                width: 210px;
+                height: 260px;
+            }
+        }
+    </style>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
@@ -69,38 +116,93 @@
                     }
                 });
         }
+    
+        // Array of progressive loading messages
+const loadingMessages = [
+"Searching for the meaning of life... and your data."
+,
+"Patience is a virtue... we're working on it.",
+'Briefly considering a career change...', 
+    'Wishing I had chosen a different career path...',
+    'This loading screen is starting to feel a bit like purgatory.',
+    'The server is currently experiencing a mid-life crisis.', 
+    'Taking a bit longer than expected...',
+    'Almost there, just a moment more...',
+    'Good things come to those who wait...',
+];
 
-    // Loader Visibility Management
-    function showLoader(message = '') {
-        const loader = document.getElementById('loader');
-        loader.style.display = 'block';
-        lottie.loadAnimation({
-            container: loader,
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-            path: '{% static "js/loader.json" %}'
-        });
+let messageIndex = 0;
+let loaderInterval = null;
+// Prevent multiple loader instances
+let isLoaderActive = false;
 
-        if (message) {
-            // Append status message below loader
-            const statusMessage = document.createElement('p');
-            statusMessage.id = 'loaderMessage';
-            statusMessage.textContent = message;
-            statusMessage.style.color = '#fff';
-            statusMessage.style.textAlign = 'center';
-            loader.appendChild(statusMessage);
-        }
+function showLoader(initialMessage = '⏳ Fetching data from server.... ☕️') {
+    // If loader is already active, prevent multiple instances
+    if (isLoaderActive) return;
+
+    isLoaderActive = true;
+    const loader = document.getElementById('loader');
+    loader.style.display = 'block';
+    
+    // Load Lottie animation
+    lottie.loadAnimation({
+        container: loader,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '{% static "js/loader.json" %}'
+    });
+
+    // Create message element
+    const statusMessage = document.createElement('p');
+    statusMessage.id = 'loaderMessage';
+    statusMessage.textContent = initialMessage;
+    statusMessage.style.color = '#fff';
+    statusMessage.style.textAlign = 'center';
+    loader.appendChild(statusMessage);
+
+    // Start rotating messages
+    messageIndex = 0;
+    loaderInterval = setInterval(() => {
+        statusMessage.textContent = loadingMessages[messageIndex];
+        messageIndex = (messageIndex + 1) % loadingMessages.length;
+    }, 1500);
+}
+
+function hideLoader() {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'none';
+
+    // Remove the status message
+    const statusMessage = document.getElementById('loaderMessage');
+    if (statusMessage) loader.removeChild(statusMessage);
+    
+    if (loaderInterval) {
+        clearInterval(loaderInterval);
+        loaderInterval = null;
     }
 
-    function hideLoader() {
-        const loader = document.getElementById('loader');
-        loader.style.display = 'none';
+    // Reset loader state
+    isLoaderActive = false;
+}
 
-        // Remove the status message
-        const statusMessage = document.getElementById('loaderMessage');
-        if (statusMessage) loader.removeChild(statusMessage);
+// Prevent multiple form submissions
+document.querySelector('form').addEventListener('submit', function(event) {
+    const submitButton = document.activeElement;
+    
+    // Check if the button is a submit button and not already disabled
+    if (submitButton.type === 'submit' && !submitButton.disabled) {
+        // Disable the button immediately to prevent multiple submissions
+        submitButton.disabled = true;
+        showLoader();
+
+        // Re-enable the button in case of error or after a timeout
+        setTimeout(() => {
+            submitButton.disabled = false;
+            hideLoader();
+        }, 10000); // 10-second timeout as a fallback
     }
+});
 
 
         // Disable fields after sending OTP and display resend OTP section
@@ -172,7 +274,7 @@
     </script>
 </head>
 <body>
-<div id="loader" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background-color: rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 20px;"> </div>
+    <div id="loader"></div>
     <form method="post" onsubmit="showLoader()">
         <h1>Signup</h1>
 
@@ -202,7 +304,7 @@
                 </span>
             </div>
         </div><br>
-        <button type="submit" id="getOtpButton" name="get_otp" disabled>Get OTP in my email</button>
+        <button type="submit" id="getOtpButton" name="get_otp" disabled>Verify My Email</button>
         <button type="button" id="editDetailsButton" onclick="enableFields()" style="display:none;">Edit Details</button>
         <p id="editMessage" style="display:none;">Please enter your email to get the verification code again. The old code will expire.</p>
         {% if otp_sent %}
@@ -218,6 +320,7 @@
         {% if error %}
             <p class="error">{{ error }}</p>
         {% endif %}
+        <br>
         <p>Already a user? <a href="{% url 'login' %}">Login here</a></p>
     </form>
 </body>

@@ -10,23 +10,157 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+    <script>
+        // Array of progressive loading messages
+        const loadingMessages = [
+            "Searching for the meaning of life... and your data.",
+            "Patience is a virtue... we're working on it.",
+            'Briefly considering a career change...', 
+            'Wishing I had chosen a different career path...',
+            'This loading screen is starting to feel a bit like purgatory.',
+            'The server is currently experiencing a mid-life crisis.', 
+            'Taking a bit longer than expected...',
+            'Almost there, just a moment more...',
+            'Good things come to those who wait...',
+        ];
+
+        let messageIndex = 0;
+        let loaderInterval = null;
+
+        function showLoader(initialMessage = '⏳ Fetching data from server.... ☕️') {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block';
+            
+            // Load Lottie animation
+            lottie.loadAnimation({
+                container: loader,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: '{% static "js/loader.json" %}'
+            });
+
+            // Create message element
+            const statusMessage = document.createElement('p');
+            statusMessage.id = 'loaderMessage';
+            statusMessage.textContent = initialMessage;
+            statusMessage.style.color = '#fff';
+            statusMessage.style.textAlign = 'center';
+            loader.appendChild(statusMessage);
+
+            // Start rotating messages
+            messageIndex = 0;
+            loaderInterval = setInterval(() => {
+                statusMessage.textContent = loadingMessages[messageIndex];
+                messageIndex = (messageIndex + 1) % loadingMessages.length;
+            }, 1500); // Change message every 2 seconds
+        }
+
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'none';
+
+            // Remove the status message and stop the interval
+            const statusMessage = document.getElementById('loaderMessage');
+            if (statusMessage) loader.removeChild(statusMessage);
+            
+            if (loaderInterval) {
+                clearInterval(loaderInterval);
+                loaderInterval = null;
+            }
+        }
+
+        function handleLogout(event) {
+            event.preventDefault();
+            showLoader('Logging out...');
+            setTimeout(() => {
+                window.location.href = event.target.href;
+            }, 1000); // Adjust the delay as needed
+        }
+    </script>
+    <style>
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            width: 190px;
+            height: 240px;
+        }
+
+        @media (min-width: 576px) {
+            #loader {
+                width: 180px;
+                height: 220px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            #loader {
+                width: 190px;
+                height: 240px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            #loader {
+                width: 200px;
+                height: 250px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            #loader {
+                width: 210px;
+                height: 260px;
+            }
+        }
+    </style>
 </head>
 <body>
+<div id="loader"></div>
     <h1 class="glow-text">Create a Forum Post</h1>
     <img src="{% static 'images/nz.png' %}" alt="Your Image" class="hover-image circle-image">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" onsubmit="showLoader()">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="upload-button">Submit Post</button>
-    </form>
-    {% if success is not None %}
+        <p class="logged-in-as">Logged in as: {{ user.first_name }} {{user.last_name}}</p>
+        {{ form.non_field_errors }}
+        <div>
+            {{ form.title.label_tag }} {{ form.title }}
+        </div>
+        <div>
+            {{ form.author.label_tag }} {{ form.author }}
+        </div>
+        <div>
+            {{ form.genre.label_tag }} {{ form.genre }}
+        </div>
+        <div>
+            {{ form.photo.label_tag }}
+            <label for="file-upload" class="custom-file-upload">
+                Choose File
+            </label>
+            <input id="file-upload" type="file" name="photo">
+        </div>
+        <div>
+            {{ form.post.label_tag }} {{ form.post }}
+        </div>
+        {% if success is not None %}
         {% if success %}
             <p class="success-message">Post created successfully!</p>
         {% else %}
             <p class="error-message">Failed to create post. Please try again.</p>
         {% endif %}
     {% endif %}
-    <a href="{% url 'logout' %}">Logout here</a>
+        <button type="submit" class="upload-button">Submit Post</button>
+        <a href="{% url 'logout' %}" class="logout-link" onclick="handleLogout(event)">Logout</a>
+    </form>
+
     <script src="{% static 'js/scripts.js' %}"></script>
 </body>
 </html>
