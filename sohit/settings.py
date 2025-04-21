@@ -65,10 +65,10 @@ WSGI_APPLICATION = 'sohit.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sohitgiri',
-        'USER': 'sohitgiri_user',
-        'PASSWORD': 'LyEOS26lDUWwABLhZ6WPBoA1xQL3jkvI',
-        'HOST': 'dpg-ctd25k52ng1s73ftq9gg-a.oregon-postgres.render.com',
+        'NAME': 'sohit_giri',
+        'USER': 'sohit_giri_user',
+        'PASSWORD': 'iRLsE7rrrX6xH5N05p8MOs31cLVyBAe8',
+        'HOST': 'dpg-d0334vmuk2gs73f0drk0-a.oregon-postgres.render.com',
         'PORT': '5432',
     }
 }
